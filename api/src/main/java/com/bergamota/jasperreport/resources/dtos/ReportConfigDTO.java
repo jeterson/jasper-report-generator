@@ -1,12 +1,11 @@
 package com.bergamota.jasperreport.resources.dtos;
 
 import com.bergamota.jasperreport.entities.ReportConfig;
-import com.bergamota.jasperreport.utils.ReportParamsUtil;
 
 import lombok.Data;
 
 @Data
-public class ReportConfigDTO {
+public class ReportConfigDTO implements DataTransformObject<ReportConfig> {
 	private String key;
 	private String imagePath;	
 	private String generatedReportBasePath;
@@ -14,13 +13,15 @@ public class ReportConfigDTO {
 	private boolean active;
 	private boolean useUserHomeBasePath;
 	
-	public ReportConfig toReportConfig() {
-		var c = new ReportConfig();
-		c.setActive(active);
-		c.setBasePath(useUserHomeBasePath ? ReportParamsUtil.userHome : basePath);
-		c.setGeneratedReportBasePath(generatedReportBasePath);
-		c.setImagePath(imagePath);
-		c.setKey(key);		
-		return c;
+	
+	@Override
+	public ReportConfig transform() {
+		return ReportConfig.builder()
+				.active(active)
+				.imagePath(imagePath)
+				.generatedReportBasePath(generatedReportBasePath)
+				.key(key)
+				.basePath(useUserHomeBasePath ? System.getProperty("user.home") : basePath)
+				.build();
 	}
 }

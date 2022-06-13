@@ -29,7 +29,7 @@ public class ReportConfigResource {
 	
 	@PostMapping(produces = "application/json")
 	public ResponseEntity<Void> createConfig(@RequestBody ReportConfigDTO config) {
-		service.save(config.toReportConfig());
+		service.save(config.transform());
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 	

@@ -8,7 +8,6 @@ import com.bergamota.jasperreport.repositories.ReportConfigRepository;
 import com.bergamota.jasperreport.services.base.interfaces.FileSystemService;
 import com.bergamota.jasperreport.services.base.interfaces.ReportConfigActionsService;
 import com.bergamota.jasperreport.services.base.interfaces.ReportConfigService;
-import com.bergamota.jasperreport.utils.ReportParamsUtil;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,9 +26,9 @@ public class ReportConfigServiceImpl implements ReportConfigService, ReportConfi
 	private ReportConfig config;
 	
 	public ReportConfigServiceImpl crateDefaultParameter() {
-		ReportConfig config = new ReportConfig();
+		ReportConfig config = ReportConfig.builder().build();
 		config.setKey(REPORT_CONFIG_DEFAULT_KEY);
-		config.setBasePath(ReportParamsUtil.userHome + ReportParamsUtil.separator);
+		config.setBasePath(fileSystemService.userHomePath() + fileSystemService.separator());
 		config.setGeneratedReportBasePath(REPORT_CONFIG_DEFAULT_GENERATED);
 		config.setImagePath(REPORT_CONFIG_DEFAULT_IMAGES);
 		config.setActive(true);
