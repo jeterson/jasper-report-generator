@@ -5,6 +5,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -47,7 +48,8 @@ public class Report implements DataTransformObject<ReportDTO>{
 	@ManyToOne
 	@JoinColumn(name="connection_id", referencedColumnName = "id")
 	private ReportConnection connection;
-		
+	
+	@Column(unique = true)
 	private String fileName;
 	
 	@OneToMany(mappedBy = "report", cascade = CascadeType.ALL, fetch = FetchType.EAGER)

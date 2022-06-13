@@ -55,9 +55,16 @@ public class ReportResource extends BaseResource<Report, Long, ReportDTO, Report
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 	
-	@PostMapping(value="/{reportId}", produces = "application/json")
+	@PostMapping(value="/generate/{reportId}", produces = "application/json")
 	public ResponseEntity<Void> generateReport(@PathVariable Long reportId, @RequestBody List<ReportParameter> parameters, HttpServletResponse response) {
 		var report = service.findById(reportId);				
+		generatorService.generateReport(report, parameters, response);
+		return ResponseEntity.ok().build();
+	}
+	
+	@PostMapping(value="/generate", produces = "application/json")
+	public ResponseEntity<Void> generateReport(@RequestParam("reportName") String reportName, @RequestBody List<ReportParameter> parameters, HttpServletResponse response) {
+		var report = _service.findByName(reportName);		
 		generatorService.generateReport(report, parameters, response);
 		return ResponseEntity.ok().build();
 	}

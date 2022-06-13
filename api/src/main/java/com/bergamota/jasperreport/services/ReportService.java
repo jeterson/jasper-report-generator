@@ -6,6 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.bergamota.jasperreport.entities.Category;
 import com.bergamota.jasperreport.entities.Report;
+import com.bergamota.jasperreport.exceptions.EntityNotFoundException;
 import com.bergamota.jasperreport.exceptions.http.BadRequestException;
 import com.bergamota.jasperreport.repositories.ReportRepository;
 import com.bergamota.jasperreport.services.base.BaseService;
@@ -39,6 +40,15 @@ public class ReportService extends BaseService<Report, Long, ReportRepository> {
 
 		return super.save(entity);
 
+	}
+	
+	public Report findByName(String name) {
+		
+		var rpt = repository.findByName(name);
+		if(rpt == null)
+			throw new EntityNotFoundException(Report.class, "name",name);
+		
+		return rpt;
 	}
 	
 

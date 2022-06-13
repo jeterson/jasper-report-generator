@@ -6,4 +6,5 @@ import com.bergamota.jasperreport.entities.Report;
 
 public interface ReportRepository extends JpaRepository<Report, Long>{
 
+	Report findByName(String name);
 }
