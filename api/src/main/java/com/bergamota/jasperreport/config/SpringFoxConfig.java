@@ -22,10 +22,10 @@ public class SpringFoxConfig extends WebMvcConfigurationSupport {
 
 	@Bean
 	public Docket productApi() {
-		return new Docket(DocumentationType.SWAGGER_2)
-				.select()				
-				.apis(RequestHandlerSelectors.basePackage("com.bergamota"))				
-				.build()
+		return new Docket(DocumentationType.SPRING_WEB)				
+				.select()					
+				.apis(RequestHandlerSelectors.basePackage("com.bergamota"))					
+				.build()			
 				.apiInfo(metaData());
 	}
 
@@ -43,7 +43,8 @@ public class SpringFoxConfig extends WebMvcConfigurationSupport {
 		argumentResolvers.add( new PageableHandlerMethodArgumentResolver());
 		super.addArgumentResolvers(argumentResolvers);
 	}
-
+	
+	
 
 	private ApiInfo metaData() {
 		return new ApiInfoBuilder()
@@ -51,7 +52,7 @@ public class SpringFoxConfig extends WebMvcConfigurationSupport {
 				.description("Spring Boot REST API")
 				.version("1.0.0")
 				.license("Apache License Version 2.0")
-				.licenseUrl("https://www.apache.org/licenses/LICENSE-2.0/")
+				.licenseUrl("https://www.apache.org/licenses/LICENSE-2.0/")			
 				.build();
 	}
 }

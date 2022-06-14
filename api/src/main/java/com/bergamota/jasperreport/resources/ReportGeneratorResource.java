@@ -4,7 +4,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,7 +18,6 @@ import io.swagger.annotations.ApiOperation;
 @Api(value = "Report Generator Resource", produces = "application/json")
 @RestController
 @RequestMapping("/generator-reports")
-@CrossOrigin(origins = "http://localhost:4200")
 public class ReportGeneratorResource {
 
 	@Autowired
