@@ -54,4 +54,15 @@ public class FileSystemServiceImpl implements FileSystemService{
 		return file;
 	}
 
+	@Override
+	public void delete(String fileName) {
+		var file = createFile(fileName);
+		
+		if(file.exists())
+			file.delete();
+		else
+			log.warn("File {} not exists", fileName);
+		
+	}
+
 }

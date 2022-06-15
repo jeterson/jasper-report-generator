@@ -27,7 +27,8 @@ public abstract class BaseResource<ENTITY extends DataTransformObject<DTO>, ID, 
 	
 	@PostMapping(produces = "application/json")
 	protected ResponseEntity<DTO> insert(@RequestBody DTO obj) {
-		var saved = service.save(obj.transform());		
+		var entity = obj.transform();
+		var saved = service.save(entity);		
 		return ResponseEntity.status(HttpStatus.CREATED).body(saved.transform());
 	}
 	

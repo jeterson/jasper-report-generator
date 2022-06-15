@@ -82,8 +82,14 @@ public class ReportGeneratorServiceImpl implements ReportGeneratorService {
 	public String generateReport(Report report, List<ReportParameter> parameters, HttpServletResponse response) {
 		
 		var dir = generatorService.generateReport(report, parameters);
-		downloadService.download(response, dir, configService.deleteAfterDownload());
+		if(response != null)
+			downloadService.download(response, dir, configService.deleteAfterDownload());
 		return dir;
+	}
+
+	@Override
+	public String generateReport(Report report, List<ReportParameter> parameters) {
+		return generateReport(report, parameters, null);
 	}
 
 		

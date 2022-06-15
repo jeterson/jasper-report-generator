@@ -11,9 +11,11 @@ public interface FileSystemService {
 	
 	void createDirectoryIfNotExists(String path);
 	
-	String getFileName(String fullPath);
+	String getFileName(String fullPath);	
 	
 	File createFile(String path);
+	
+	void delete(String fileName);
 	
 	default String separator() {
 		return System.getProperty("file.separator");

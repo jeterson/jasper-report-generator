@@ -12,4 +12,6 @@ public interface ReportGeneratorService {
 
 	String generateReport(ReportPayload payload, HttpServletResponse response);
 	String generateReport(Report report,List<ReportParameter> parameters, HttpServletResponse response);
+	String generateReport(Report report,List<ReportParameter> parameters);
+	
 }

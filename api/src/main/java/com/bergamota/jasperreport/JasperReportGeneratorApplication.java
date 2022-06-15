@@ -1,16 +1,16 @@
 package com.bergamota.jasperreport;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ApplicationContext;
 
-import com.bergamota.jasperreport.model.ReportParameter;
+import com.bergamota.jasperreport.entities.EmailTaskDefinition;
 import com.bergamota.jasperreport.services.JasperReportGeneratorService;
 import com.bergamota.jasperreport.services.ReportService;
+import com.bergamota.jasperreport.services.tasks.ReportSenderEmailServiceTask;
+import com.bergamota.jasperreport.services.tasks.ScheduleTaskService;
 
 @SpringBootApplication
 public class JasperReportGeneratorApplication implements CommandLineRunner {
@@ -21,9 +21,12 @@ public class JasperReportGeneratorApplication implements CommandLineRunner {
 	@Autowired
 	private ReportService service;
 	
-	/*@Autowired
-	private ReportConnectionService reportConnectionService;
-	*/
+	@Autowired
+	private ScheduleTaskService scheduleTaskService;
+	
+	@Autowired
+	private ApplicationContext context;
+		
 	
 	public static void main(String[] args) {
 		SpringApplication.run(JasperReportGeneratorApplication.class, args);
@@ -33,9 +36,16 @@ public class JasperReportGeneratorApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		var rpt = service.findById(20L);
+		var taskDefinitin = EmailTaskDefinition.builder().build();
+		taskDefinitin.setCronExpression("0 * * ? * *");
+		taskDefinitin.setReferenceId(20L);
+		taskDefinitin.setRecipients(new String[] {"jetersonsi@gmail.com"});
+		taskDefinitin.setName("send-email-report");
+		taskDefinitin.setSubject("Relatorio");
+		taskDefinitin.setBody("");
 		
-		reportService.generateReport(rpt, Arrays.asList());
+		scheduleTaskService.addTaskToScheduler(1, new ReportSenderEmailServiceTask(taskDefinitin, context));
+		
 	}
 
 }
