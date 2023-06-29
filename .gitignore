@@ -31,3 +31,15 @@ build/
 
 ### VS Code ###
 .vscode/
+/out/artifacts/executable_jar/executable.jar
+/application/.gitignore
+/common/common-application/.gitignore
+/common/common-domain/.gitignore
+/common/.gitignore
+/container/.gitignore
+/dataaccess/.gitignore
+/domain/domain-application-service/.gitignore
+/domain/domain-application-service-impl/.gitignore
+/domain/domain-core/.gitignore
+/domain/.gitignore
+/executable/.gitignore
