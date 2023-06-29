@@ -36,15 +36,16 @@ public class JasperReportGeneratorApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		var taskDefinitin = EmailTaskDefinition.builder().build();
+		/*var taskDefinitin = EmailTaskDefinition.builder().build();
 		taskDefinitin.setCronExpression("0 * * ? * *");
 		taskDefinitin.setReferenceId(20L);
 		taskDefinitin.setRecipients(new String[] {"jetersonsi@gmail.com"});
 		taskDefinitin.setName("send-email-report");
-		taskDefinitin.setSubject("Relatorio");
+		taskDefinitin.setSubject("Relatorio");		
 		taskDefinitin.setBody("");
 		
 		scheduleTaskService.addTaskToScheduler(1, new ReportSenderEmailServiceTask(taskDefinitin, context));
+		 */
 		
 	}
 

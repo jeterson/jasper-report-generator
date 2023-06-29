@@ -10,7 +10,9 @@ import com.bergamota.jasperreport.entities.EmailConfig;
 public class JavaMailerService {
 
 	private JavaMailSender javaMailSender;
+	private EmailConfig emailConfig;
 	private static JavaMailerService instance;
+	
 
 	private JavaMailerService() {}
 
@@ -28,10 +30,15 @@ public class JavaMailerService {
 	public JavaMailSender getSender() {
 		return javaMailSender;
 	}
+	
+	public EmailConfig getEmailConfig() {
+		return emailConfig;
+	}
 
-	public void setEmailConfig(EmailConfig emailConfig) {
-		JavaMailSenderImpl javaMailSenderImpl = new JavaMailSenderImpl();
+	public void setEmailConfig(EmailConfig emailConfig) {		
 
+		this.emailConfig = emailConfig;
+		
 		JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
 		//mailSender.setHost("smtp.mailtrap.io");
 		mailSender.setHost(emailConfig.getHost());
@@ -49,7 +56,7 @@ public class JavaMailerService {
 		props.put("mail.smtp.starttls.enable", emailConfig.isTtls());
 		props.put("mail.debug", "false");
 		
-		setSender(javaMailSenderImpl);
+		setSender(mailSender);
 	}
 
 

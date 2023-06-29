@@ -101,7 +101,7 @@ public abstract class AbstractReportEmailServiceTask implements TaskletService, 
 
 		MimeMessageHelper mmh = new MimeMessageHelper(mm, true);
 		mmh.setTo(taskDefinition.getRecipients());
-		mmh.setFrom("noreply@gmail.com");
+		mmh.setFrom(JavaMailerService.getInstance().getEmailConfig().getSender());
 		mmh.setSubject(taskDefinition.getSubject().replace("{{REPORT_NAME}}", rpt.getName()));
 		mmh.setSentDate(new Date(System.currentTimeMillis()));
 		mmh.setText(taskDefinition.getBody() == null || taskDefinition.getBody().isBlank() ? "Segue em anexo" : taskDefinition.getBody());
