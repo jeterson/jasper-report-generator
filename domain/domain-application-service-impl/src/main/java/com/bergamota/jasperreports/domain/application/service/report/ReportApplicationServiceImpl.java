@@ -14,6 +14,7 @@ import com.bergamota.jasperreports.domain.core.entities.*;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -30,6 +31,11 @@ public class ReportApplicationServiceImpl implements ReportApplicationService {
     @Override
     public Report findById(Long id) {
         return reportRepository.findById(id).orElseThrow(() -> new ReportNotFoundException(Report.class, "id", id));
+    }
+
+    @Override
+    public List<Report> findAll(String reportName, Long categoryId, String categoryPath) {
+        return reportRepository.findAll(reportName, categoryId, categoryPath);
     }
 
     @Override
@@ -79,6 +85,19 @@ public class ReportApplicationServiceImpl implements ReportApplicationService {
             throw new ReportDomainException("Error when trying upload file " + e.getMessage(), e);
         }
 
+    }
+
+    public Set<ReportParameter> findParametersFromJrxml(Long reportId){
+        var report = findById(reportId);
+        var parameters = reportExtractorParameterApplicationService.extractParametersFromJrXml(report.getFullFilePath());
+        parameters = parameters.stream().map(p -> p.withReport(report)).collect(Collectors.toSet());
+        return parameters;
+    }
+
+    @Override
+    public boolean isReportFileAvailable(Long reportId) {
+        var report = findById(reportId);
+        return fileSystemApplicationService.exists(report.getFullFilePath());
     }
 
     @Override

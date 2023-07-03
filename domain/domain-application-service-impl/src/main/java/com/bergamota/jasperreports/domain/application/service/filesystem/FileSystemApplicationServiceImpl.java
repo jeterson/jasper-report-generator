@@ -69,4 +69,15 @@ public class FileSystemApplicationServiceImpl implements FileSystemApplicationSe
 		
 	}
 
+	@Override
+	public boolean exists(String filePath) {
+		try {
+			var file = createFile(filePath);
+			return file.exists();
+		}catch (Exception ex){
+			log.warn("File exists check failed: {}", ex.getMessage());
+			return false;
+		}
+	}
+
 }

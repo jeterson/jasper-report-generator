@@ -1,5 +1,6 @@
 package com.bergamota.jasperreports.domain.application.service.connectionconfig;
 
+import com.bergamota.jasperreports.common.domain.valueobjects.ReportDatabase;
 import com.bergamota.jasperreports.domain.application.service.dto.configconnection.CreateConfigConnection;
 import com.bergamota.jasperreports.domain.application.service.dto.configconnection.UpdateConfigConnection;
 import com.bergamota.jasperreports.domain.application.service.input.services.ConnectionApplicationService;
@@ -7,7 +8,6 @@ import com.bergamota.jasperreports.domain.application.service.input.services.Con
 import com.bergamota.jasperreports.domain.application.service.input.services.EncryptionApplicationService;
 import com.bergamota.jasperreports.domain.application.service.output.repository.ConnectionConfigRepository;
 import com.bergamota.jasperreports.domain.core.entities.ConnectionConfig;
-import com.bergamota.jasperreports.domain.core.exceptions.ConnectionConfigDomainException;
 import com.bergamota.jasperreports.domain.core.exceptions.ConnectionConfigNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -98,8 +98,13 @@ public class ConnectionConfigApplicationServiceImpl implements ConnectionConfigA
 
     @Override
     public List<ConnectionConfig> findAll() {
+        return findAll("", ReportDatabase.NONE);
+    }
+
+    @Override
+    public List<ConnectionConfig> findAll(String name, ReportDatabase database) {
         return connectionConfigRepository
-                .findAll()
+                .findAll(name, database)
                 .stream()
                 .map(e -> {
                     e = e.withStatus(connectionApplicationService.testConnection(e));

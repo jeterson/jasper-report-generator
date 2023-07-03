@@ -2,6 +2,7 @@ package com.bergamota.jasperreports.domain.application.service.connection;
 
 import com.bergamota.jasperreports.domain.application.service.input.services.ConnectionApplicationService;
 import com.bergamota.jasperreports.domain.application.service.input.services.EncryptionApplicationService;
+import com.bergamota.jasperreports.domain.core.entities.ConfigConnectionStatus;
 import com.bergamota.jasperreports.domain.core.entities.ConnectionConfig;
 import com.bergamota.jasperreports.domain.core.exceptions.ConnectionException;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +10,6 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -38,18 +38,19 @@ public class ConnectionApplicationServiceImpl implements ConnectionApplicationSe
 
     @Override
     @SneakyThrows
-    public boolean testConnection(ConnectionConfig connectionConfig){
+    public ConfigConnectionStatus testConnection(ConnectionConfig connectionConfig){
         Connection conn = null;
         try {
+            log.info("Driver name: {}", connectionConfig.getDatabase().getDriver());
             var conOpt = getConnection(connectionConfig);
             if(conOpt.isEmpty())
                 throw new ConnectionException("Failed to test connection. Connection is Empty");
             conn = conOpt.get();
             log.info("Connection successfully");
-            return true;
+            return new ConfigConnectionStatus(true, "Connection OK");
         }catch (ConnectionException e) {
             log.error("Connection Failed. Reason: " + e.getMessage(), e);
-            return false;
+            return new ConfigConnectionStatus(false, e.getMessage());
         }finally {
             if(conn != null && !conn.isClosed())
                 conn.close();
@@ -57,7 +58,7 @@ public class ConnectionApplicationServiceImpl implements ConnectionApplicationSe
     }
 
     private Connection createConnection(String username, String password, String url, String driver) {
-        Connection con = null;
+        Connection con;
 
         try {
             Class.forName(driver);

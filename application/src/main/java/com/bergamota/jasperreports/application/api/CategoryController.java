@@ -4,7 +4,6 @@ import com.bergamota.jasperreports.domain.application.service.dto.category.Categ
 import com.bergamota.jasperreports.domain.application.service.dto.category.CreateCategoryCommand;
 import com.bergamota.jasperreports.domain.application.service.input.services.CategoryApplicationService;
 import com.bergamota.jasperreports.domain.core.entities.CategoryTree;
-import io.swagger.models.Response;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,7 +29,7 @@ public class CategoryController {
 
     @GetMapping
     public ResponseEntity<List<Category>> findAll(CategoryRequestFilter categoryRequestFilter){
-        var categories = categoryApplicationService.findAll();
+        var categories = categoryApplicationService.findAll(categoryRequestFilter.description(), categoryRequestFilter.parentId());
         return ResponseEntity.ok(categories);
     }
 

@@ -24,5 +24,7 @@ public interface FileSystemApplicationService {
 	default String userHomePath() {
 		return System.getProperty("user.home");
 	}
+
+	boolean exists(String filePath);
 	
 }

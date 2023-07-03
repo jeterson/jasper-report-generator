@@ -2,8 +2,7 @@ package com.bergamota.jasperreports.application.exception;
 
 import com.bergamota.jasperreports.domain.core.exceptions.CategoryDomainException;
 import com.bergamota.jasperreports.domain.core.exceptions.CategoryNotFoundException;
-import com.bergamota.jasperreports.domain.core.exceptions.ConnectionConfigDomainException;
-import com.bergamota.jasperreports.domain.core.exceptions.ConnectionConfigNotFoundException;
+
 import com.jeterson.areaclientewinthor.common.application.ErrorDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
@@ -39,4 +38,5 @@ public class CategoryApplicationExceptionHandler {
                 .message(exception.getMessage())
                 .build();
     }
+
 }

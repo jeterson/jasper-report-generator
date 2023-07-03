@@ -2,13 +2,10 @@ package com.bergamota.jasperreports.dataaccess.report.entities;
 
 import com.bergamota.jasperreports.dataaccess.category.entities.CategoryEntity;
 import com.bergamota.jasperreports.dataaccess.connectionconfig.entities.ConnectionConfigEntity;
-import com.bergamota.jasperreports.domain.core.entities.ConnectionConfig;
-import com.bergamota.jasperreports.domain.core.entities.ReportParameter;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -41,7 +38,7 @@ public class ReportEntity {
     @Column(unique = true)
     private String fileName;
 
-    @OneToMany(mappedBy = "report", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "report", fetch = FetchType.EAGER)
     @Builder.Default
     private Set<ReportParameterEntity> parameters = new HashSet<>();
 

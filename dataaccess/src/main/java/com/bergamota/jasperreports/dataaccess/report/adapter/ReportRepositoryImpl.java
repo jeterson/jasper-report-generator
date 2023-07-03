@@ -1,7 +1,6 @@
 package com.bergamota.jasperreports.dataaccess.report.adapter;
 
 import com.bergamota.jasperreports.dataaccess.report.entities.ReportParameterEntity;
-import com.bergamota.jasperreports.dataaccess.report.entities.ReportParameterViewEntity;
 import com.bergamota.jasperreports.dataaccess.report.mapper.ReportDataAccessMapper;
 import com.bergamota.jasperreports.dataaccess.report.repository.ReportJpaRepository;
 import com.bergamota.jasperreports.dataaccess.report.repository.ReportParameterJpaRepository;
@@ -67,5 +66,11 @@ public class ReportRepositoryImpl implements ReportRepository {
     public List<Report> findByCategory(Long categoryId) {
         var category = Category.builder().id(categoryId).build();
         return reportJpaRepository.findByCategory(category).stream().map(reportDataAccessMapper::domainEntity).toList();
+    }
+
+    @Override
+    public List<Report> findAll(String reportName, Long categoryId, String categoryPath) {
+        return reportJpaRepository.findByNameAndCategoryAndCategoryPath(reportName, categoryId, categoryPath)
+                .stream().map(reportDataAccessMapper::domainEntity).toList();
     }
 }

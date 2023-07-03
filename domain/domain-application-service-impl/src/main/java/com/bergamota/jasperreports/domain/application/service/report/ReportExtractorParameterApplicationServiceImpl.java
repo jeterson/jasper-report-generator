@@ -23,9 +23,11 @@ public class ReportExtractorParameterApplicationServiceImpl implements ReportExt
 
 
     private  String getCharacterDataFromElement(Element e) {
+        if(e == null)
+            return "";
+
         Node child = e.getFirstChild();
-        if (child instanceof CharacterData) {
-            CharacterData cd = (CharacterData) child;
+        if (child instanceof CharacterData cd) {
             return cd.getData();
         }
         return "";
@@ -65,6 +67,7 @@ public class ReportExtractorParameterApplicationServiceImpl implements ReportExt
                                     .defaultValue(defaultValue)
                                     .type(ReportParamType.toEnum(classType))
                                     .reportType(ReportParamType.toEnum(classType))
+                                    .createdManually(false)
                                     .reportParameterView(ReportParameterView.builder()
                                             .label(description.isEmpty() ? name : description)
                                             .visible(Boolean.parseBoolean(isPrompting))

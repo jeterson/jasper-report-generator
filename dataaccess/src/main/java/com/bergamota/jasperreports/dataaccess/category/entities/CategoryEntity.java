@@ -27,8 +27,8 @@ public class CategoryEntity {
 	private String description;
 	private String path;
 	
-	@OneToOne(fetch=FetchType.EAGER, cascade = CascadeType.ALL)
-	@JoinColumn(name="parent_category_id", referencedColumnName="id", nullable = true)  	   
+	@OneToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="parent_category_id", referencedColumnName="id")
 	private CategoryEntity parent;
 	
 	

@@ -1,6 +1,5 @@
 package com.bergamota.jasperreports.dataaccess.report.mapper;
 
-import com.bergamota.jasperreports.dataaccess.report.entities.ReportEntity;
 import com.bergamota.jasperreports.dataaccess.report.entities.ReportParameterEntity;
 import com.bergamota.jasperreports.dataaccess.report.entities.ReportParameterViewEntity;
 import com.bergamota.jasperreports.domain.core.entities.ReportParameter;
@@ -8,7 +7,6 @@ import com.bergamota.jasperreports.domain.core.entities.ReportParameterView;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 
 
 @Component
@@ -29,20 +27,22 @@ public class ReportParameterDataAccessMapper {
                 .name(entity.getName())
                 .reportType(entity.getReportType())
                 .pattern(entity.getPattern())
+                .createdManually(entity.getCreatedManually() == null)
                 .report(reportDataAccessMapper.domainEntity(entity.getReport(),false,false))
                 .reportParameterView(!fillViews ? null : domainEntityView(entity.getReportParameterView()))
                 .build();
     }
-    public ReportParameterEntity dataAccessEntity(ReportParameter reportParameter){
+    public ReportParameterEntity dataAccessEntity(ReportParameter reportParameter, boolean fillParametersOfReport){
         return ReportParameterEntity.builder()
                 .defaultValue(String.valueOf(reportParameter.getDefaultValue() == null ? "" : reportParameter.getDefaultValue()))
                 .id(reportParameter.getId())
                 .name(reportParameter.getName())
                 .pattern(reportParameter.getPattern())
                 .type(reportParameter.getType())
+                .createdManually(reportParameter.isCreatedManually())
                 .reportType(reportParameter.getReportType())
-                .reportParameterView(reportParameter.getReportParameterView() == null ? null :ReportParameterViewEntity.builder().id(reportParameter.getReportParameterView().getId()).build())
-                .report(reportDataAccessMapper.dataAccessEntity(reportParameter.getReport()))
+                .reportParameterView(dataAccessEntityView(reportParameter.getReportParameterView()))
+                .report(reportDataAccessMapper.dataAccessEntity(reportParameter.getReport(), fillParametersOfReport))
                 .build();
     }
     public ReportParameterView domainEntityView(ReportParameterViewEntity entity){

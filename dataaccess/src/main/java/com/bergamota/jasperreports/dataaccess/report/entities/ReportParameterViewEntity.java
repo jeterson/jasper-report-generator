@@ -1,6 +1,5 @@
 package com.bergamota.jasperreports.dataaccess.report.entities;
 
-import com.bergamota.jasperreports.domain.core.entities.ReportParameter;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,7 +24,7 @@ public class ReportParameterViewEntity {
     private boolean visible;
     private boolean required;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "report_parameter_id", referencedColumnName = "id")
     private ReportParameterEntity reportParameter;
 

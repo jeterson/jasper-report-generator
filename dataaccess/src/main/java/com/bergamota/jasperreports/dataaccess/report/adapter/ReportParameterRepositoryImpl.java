@@ -1,14 +1,17 @@
 package com.bergamota.jasperreports.dataaccess.report.adapter;
 
+import com.bergamota.jasperreports.dataaccess.report.entities.ReportEntity;
 import com.bergamota.jasperreports.dataaccess.report.mapper.ReportParameterDataAccessMapper;
 import com.bergamota.jasperreports.dataaccess.report.repository.ReportParameterJpaRepository;
 import com.bergamota.jasperreports.dataaccess.report.repository.ReportParameterViewJpaRepository;
 import com.bergamota.jasperreports.domain.application.service.output.repository.ReportParameterRepository;
 import com.bergamota.jasperreports.domain.core.entities.ReportParameter;
+import jakarta.persistence.PreRemove;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -21,7 +24,7 @@ public class ReportParameterRepositoryImpl implements ReportParameterRepository 
     @Transactional
     @Override
     public ReportParameter save(ReportParameter obj) {
-        var reportParameterEntity = reportParameterDataAccessMapper.dataAccessEntity(obj);
+        var reportParameterEntity = reportParameterDataAccessMapper.dataAccessEntity(obj, false);
         reportParameterEntity.setReportParameterView(null);
         var saved = reportParameterJpaRepository.save(reportParameterEntity);
         var reportParameterView = reportParameterDataAccessMapper.dataAccessEntityView(obj.getReportParameterView());
@@ -39,13 +42,21 @@ public class ReportParameterRepositoryImpl implements ReportParameterRepository 
     }
 
     @Transactional
+    @PreRemove
     @Override
     public void remove(Long aLong) {
         var item = reportParameterJpaRepository.findById(aLong);
         if(item.isPresent()){
             if(item.get().getReportParameterView() != null)
                 reportParameterViewJpaRepository.delete(item.get().getReportParameterView());
+
             reportParameterJpaRepository.delete(item.get());
         }
+    }
+
+    @Override
+    public List<ReportParameter> findByReport(Long reportId) {
+        return reportParameterJpaRepository.findByReport(ReportEntity.builder().id(reportId).build())
+                .stream().map(reportParameterDataAccessMapper::domainEntity).toList();
     }
 }

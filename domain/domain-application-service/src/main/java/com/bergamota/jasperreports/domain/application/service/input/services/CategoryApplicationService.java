@@ -2,7 +2,6 @@ package com.bergamota.jasperreports.domain.application.service.input.services;
 import com.bergamota.jasperreports.domain.core.entities.*;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface CategoryApplicationService {
 
@@ -11,6 +10,7 @@ public interface CategoryApplicationService {
 
     Category update(Category category);
     List<Category> findAll();
+    List<Category> findAll(String description, Long parentId);
     List<CategoryTree> getCategoriesAsTree();
     void remove(Long id);
 

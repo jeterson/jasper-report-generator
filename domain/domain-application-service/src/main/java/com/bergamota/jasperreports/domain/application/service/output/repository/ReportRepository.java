@@ -4,9 +4,9 @@ import com.bergamota.jasperreports.domain.application.service.common.CrudReposit
 import com.bergamota.jasperreports.domain.core.entities.Report;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface ReportRepository extends CrudRepository<Report, Long> {
 
     List<Report> findByCategory(Long categoryId);
+    List<Report> findAll(String reportName, Long categoryId, String categoryPath);
 }

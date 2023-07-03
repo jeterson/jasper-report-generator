@@ -1,6 +1,5 @@
 package com.bergamota.jasperreports.dataaccess.report.entities;
 
-import com.bergamota.jasperreports.domain.core.entities.ReportParameterView;
 import com.bergamota.jasperreports.domain.core.valueobjects.ReportParamType;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -10,7 +9,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
 
 @Entity
 @Builder(toBuilder = true)
@@ -36,6 +34,8 @@ public class ReportParameterEntity {
     private ReportParamType reportType;
     private String pattern;
     private String defaultValue;
+    @Column()
+    private Boolean createdManually = true;
 
     @ManyToOne
     @JoinColumn(name = "report_id", referencedColumnName = "id")

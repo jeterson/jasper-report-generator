@@ -11,6 +11,7 @@ import com.bergamota.jasperreports.domain.core.entities.ReportParameterView;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -22,15 +23,19 @@ public class ReportDataAccessMapper {
     private final ConnectionConfigDataAccessMapper connectionConfigDataAccessMapper;
 
     public ReportEntity dataAccessEntity(Report report){
+        return dataAccessEntity(report, true);
+    }
+
+    public ReportEntity dataAccessEntity(Report report, boolean fillParameters){
         if(report == null)
             return null;
 
         return ReportEntity.builder()
                 .category(categoryDataAccessMapper.dataAccessEntity(report.getCategory()))
-                .subReports(report.getSubReports().stream().map(this::dataAccessEntity).collect(Collectors.toSet()))
+                .subReports(report.getSubReports() == null ? new HashSet<>() : report.getSubReports().stream().map(this::dataAccessEntity).collect(Collectors.toSet()))
                 .connection(connectionConfigDataAccessMapper.dataAccessEntity(report.getConnectionConfig()))
                 .parent(dataAccessEntity(report.getParent()))
-                .parameters(report.getParameters().stream().map(this::reportParameterDataAccessEntity).collect(Collectors.toSet()))
+                .parameters(fillParameters ? report.getParameters().stream().map(this::reportParameterDataAccessEntity).collect(Collectors.toSet()) : new HashSet<>())
                 .fileName(report.getFileName())
                 .filePath(report.getFilePath())
                 .name(report.getName())
@@ -83,6 +88,7 @@ public class ReportDataAccessMapper {
                 .type(reportParameterEntity.getType())
                 .defaultValue(reportParameterEntity.getDefaultValue())
                 .pattern(reportParameterEntity.getPattern())
+                .createdManually(reportParameterEntity.getCreatedManually())
                 .report(report)
                 .build();
     }
@@ -95,6 +101,7 @@ public class ReportDataAccessMapper {
                 .defaultValue(String.valueOf(reportParameter.getDefaultValue()))
                 .pattern(reportParameter.getPattern())
                 .report(dataAccessEntity(reportParameter.getReport()))
+                .createdManually(reportParameter.isCreatedManually())
                 .reportParameterView(dataAccessReportParameterViewEntity(reportParameter.getReportParameterView()))
                 .build();
     }

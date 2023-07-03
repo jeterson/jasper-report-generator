@@ -1,5 +1,6 @@
 package com.bergamota.jasperreports.dataaccess.category.adapter;
 
+import com.bergamota.jasperreports.common.domain.exception.ConstraintViolationException;
 import com.bergamota.jasperreports.dataaccess.category.mapper.CategoryDataAccessMapper;
 import com.bergamota.jasperreports.dataaccess.category.repository.CategoryJpaRepository;
 import com.bergamota.jasperreports.domain.application.service.output.repository.CategoryRepository;
@@ -19,7 +20,8 @@ public class CategoryRepositoryImpl implements CategoryRepository {
 
     @Override
     public Category save(Category obj) {
-        return categoryDataAccessMapper.domainEntity(categoryJpaRepository.save(categoryDataAccessMapper.dataAccessEntity(obj)));
+        var categoryEntity = categoryDataAccessMapper.dataAccessEntity(obj);
+        return categoryDataAccessMapper.domainEntity(categoryJpaRepository.save(categoryEntity));
     }
 
     @Override
@@ -29,12 +31,15 @@ public class CategoryRepositoryImpl implements CategoryRepository {
 
     @Override
     public void remove(Long id) {
+        if(categoryJpaRepository.hasReportForCategory(id))
+            throw new ConstraintViolationException("Category_Report", "category.id join report.categoryId");
         categoryJpaRepository.deleteById(id);
     }
 
     @Override
-    public List<Category> findAll() {
-        return categoryJpaRepository.findAll().stream().map(categoryDataAccessMapper::domainEntity).toList();
+    public List<Category> findAll(String description, Long parentId) {
+        return categoryJpaRepository.findByParentAndDescriptionContainingIgnoreCase(parentId, description)
+                .stream().map(categoryDataAccessMapper::domainEntity).toList();
     }
 
     @Override

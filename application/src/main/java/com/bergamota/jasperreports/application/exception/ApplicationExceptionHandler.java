@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 
 @Import({ConnectionApplicationExceptionHandler.class,CategoryApplicationExceptionHandler.class,ReportApplicationExceptionHandler.class})
 @ControllerAdvice
-@Order(Ordered.LOWEST_PRECEDENCE)
+@Order()
 public class ApplicationExceptionHandler extends GlobalExceptionHandler {
+
 }

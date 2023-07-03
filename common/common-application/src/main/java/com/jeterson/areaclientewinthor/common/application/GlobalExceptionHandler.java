@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
 public abstract class GlobalExceptionHandler {
 
 
-    public static final String PREFIX_ENUM_CONSTRAINT_EXCEPTION = "No enum constant";
     @ResponseBody
     @ExceptionHandler(value = {Exception.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -27,6 +26,19 @@ public abstract class GlobalExceptionHandler {
         return ErrorDTO.builder()
                 .code(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase())
                 .message("Unexpected error!")
+                .build();
+    }
+
+    @ResponseBody
+    @ExceptionHandler(value = {com.bergamota.jasperreports.common.domain.exception.ConstraintViolationException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorDTO handleException(com.bergamota.jasperreports.common.domain.exception.ConstraintViolationException exception) {
+        log.error(exception.getMessage(), exception);
+        log.error("Internal Error {}-{}", exception.getInternalCode().code(), exception.getInternalCode().defaultMessage());
+        return ErrorDTO.builder()
+                .code(HttpStatus.BAD_REQUEST.getReasonPhrase())
+                .message(exception.getMessage())
+                .internalError(new ErrorDTO(exception.getInternalCode().code(), exception.getInternalCode().defaultMessage()))
                 .build();
     }
 
@@ -57,7 +69,7 @@ public abstract class GlobalExceptionHandler {
 
 
     private List<ErrorDTO> processFieldErrors(List<FieldError> fieldErrors) {
-        List<ErrorDTO> errors = new ArrayList<ErrorDTO>();
+        List<ErrorDTO> errors = new ArrayList<>();
 
         for (FieldError fieldError: fieldErrors) {
             String localizedErrorMessage = fieldError.getDefaultMessage();

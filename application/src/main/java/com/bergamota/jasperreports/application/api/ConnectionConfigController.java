@@ -37,8 +37,9 @@ public class ConnectionConfigController {
         return ResponseEntity.ok(ReportDatabase.values());
     }
     @GetMapping
-    public ResponseEntity<List<ConnectionConfig>> findAll(){
-        var configs = connectionConfigApplicationService.findAll();
+    public ResponseEntity<List<ConnectionConfig>> findAll(@RequestParam(name = "name", defaultValue = "") String name,
+                                                          @RequestParam(name="database", defaultValue = "NONE") String database){
+        var configs = connectionConfigApplicationService.findAll(name, ReportDatabase.valueOf(database));
         return ResponseEntity.ok(configs);
     }
 

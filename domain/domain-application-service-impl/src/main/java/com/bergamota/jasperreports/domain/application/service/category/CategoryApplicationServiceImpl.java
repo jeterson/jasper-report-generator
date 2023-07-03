@@ -10,9 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +22,7 @@ public class CategoryApplicationServiceImpl implements CategoryApplicationServic
     public Category create(Category category) {
         if(category.getParent() != null && category.getParent().getId() != null) {
             var parent = findById(category.getParent().getId());
+            //category = category.withParent(parent);
             category.setPath(parent.getPath() + "/" + category.getDescription());
         }else {
             category.setPath("/" + category.getDescription());
@@ -43,7 +42,11 @@ public class CategoryApplicationServiceImpl implements CategoryApplicationServic
 
     @Override
     public List<Category> findAll() {
-        return categoryRepository.findAll();
+        return categoryRepository.findAll("", null);
+    }
+    @Override
+    public List<Category> findAll(String description, Long parentId) {
+        return categoryRepository.findAll(description, parentId);
     }
 
     private List<CategoryTree> buildTree(List<CategoryTree> categories, List<CategoryTree> tree) {
@@ -66,7 +69,7 @@ public class CategoryApplicationServiceImpl implements CategoryApplicationServic
 
     @Override
     public List<CategoryTree> getCategoriesAsTree() {
-        List<Category> categories = categoryRepository.findAll();
+        List<Category> categories = categoryRepository.findAll("", null);
 
         List<CategoryTree> categoriesDTO = categories.stream().map(CategoryTree::of).toList();
 

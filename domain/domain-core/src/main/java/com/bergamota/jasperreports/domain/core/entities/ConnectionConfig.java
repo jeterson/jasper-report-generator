@@ -20,7 +20,7 @@ public class ConnectionConfig {
     private String password;
     private String name;
     private ReportDatabase database;
-    private boolean status;
+    private ConfigConnectionStatus status;
 
     public void hiddenCredentials(){
         password = null;

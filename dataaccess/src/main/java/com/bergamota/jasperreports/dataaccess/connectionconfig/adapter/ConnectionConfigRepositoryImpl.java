@@ -1,5 +1,6 @@
 package com.bergamota.jasperreports.dataaccess.connectionconfig.adapter;
 
+import com.bergamota.jasperreports.common.domain.valueobjects.ReportDatabase;
 import com.bergamota.jasperreports.dataaccess.connectionconfig.entities.ConnectionConfigEntity;
 import com.bergamota.jasperreports.dataaccess.connectionconfig.mapper.ConnectionConfigDataAccessMapper;
 import com.bergamota.jasperreports.dataaccess.connectionconfig.repository.ConnectionConfigJpaRepository;
@@ -37,11 +38,13 @@ public class ConnectionConfigRepositoryImpl implements ConnectionConfigRepositor
         connectionConfigJpaRepository.deleteById(id);
     }
 
-    @Override
-    public List<ConnectionConfig> findAll() {
-        return connectionConfigJpaRepository.findAll().stream().map(connectionConfigDataAccessMapper::domainEntity).toList();
-    }
     private boolean isUsingByReport(Long id){
         return reportJpaRepository.findByConnection(ConnectionConfigEntity.builder().id(id).build()).stream().findAny().isPresent();
+    }
+
+    @Override
+    public List<ConnectionConfig> findAll(String name, ReportDatabase database) {
+        return connectionConfigJpaRepository.findAll(name, database.name()).stream()
+                .map(connectionConfigDataAccessMapper::domainEntity).toList();
     }
 }

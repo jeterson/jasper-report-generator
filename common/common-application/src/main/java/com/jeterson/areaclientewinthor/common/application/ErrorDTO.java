@@ -13,15 +13,20 @@ import java.util.List;
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ErrorDTO {
-    private final String code;
-    private final String message;
+    private String code;
+    private String message;
     private List<ErrorDTO> details;
+    private ErrorDTO internalError;
 
+    public ErrorDTO(String code, String message){
+        this.code = code;
+        this.message = message;
+    }
     public void addError(String code, String message) {
         if (details == null)
             details = new ArrayList<>();
 
-        details.add(new ErrorDTO(code, message, null));
+        details.add(new ErrorDTO(code, message, null,null));
     }
 
 }
