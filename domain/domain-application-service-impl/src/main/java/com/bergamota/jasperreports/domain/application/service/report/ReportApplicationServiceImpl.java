@@ -1,6 +1,8 @@
 package com.bergamota.jasperreports.domain.application.service.report;
 
 import com.bergamota.jasperreports.domain.application.service.dto.report.CreateReportCommand;
+import com.bergamota.jasperreports.domain.application.service.dto.report.UpdateReportCommand;
+import com.bergamota.jasperreports.domain.application.service.dto.report.UploadReportFileResponse;
 import com.bergamota.jasperreports.domain.application.service.input.services.*;
 import com.bergamota.jasperreports.domain.application.service.output.repository.ReportRepository;
 import com.bergamota.jasperreports.domain.core.entities.Report;
@@ -30,7 +32,12 @@ public class ReportApplicationServiceImpl implements ReportApplicationService {
 
     @Override
     public Report findById(Long id) {
-        return reportRepository.findById(id).orElseThrow(() -> new ReportNotFoundException(Report.class, "id", id));
+        var report =  reportRepository.findById(id).orElseThrow(() -> new ReportNotFoundException(Report.class, "id", id));
+        report.setReportAvailable(isReportFileAvailable(report.getFullFilePath()));
+        report.getSubReports().forEach(s -> {
+            s.setReportAvailable(isReportFileAvailable(s.getFullFilePath()));
+        });
+        return report;
     }
 
     @Override
@@ -44,7 +51,21 @@ public class ReportApplicationServiceImpl implements ReportApplicationService {
     }
 
     @Override
-    public Report update(Report report) {
+    public Report update(UpdateReportCommand reportCommand) {
+
+        var auxReport = findById(reportCommand.reportId());
+
+        var report = Report.builder()
+                .name(reportCommand.name())
+                .category(categoryApplicationService.findById(reportCommand.categoryId()))
+                .connectionConfig(connectionConfigApplicationService.findById(reportCommand.connectionId()))
+                .parameters(auxReport.getParameters())
+                .subReports(auxReport.getSubReports())
+                .fileName(auxReport.getFileName())
+                .id(reportCommand.reportId())
+                .filePath(auxReport.getFilePath())
+                .build();
+
         return reportRepository.save(report);
     }
 
@@ -100,24 +121,36 @@ public class ReportApplicationServiceImpl implements ReportApplicationService {
         return fileSystemApplicationService.exists(report.getFullFilePath());
     }
 
+    private boolean isReportFileAvailable(String fullPath){
+        return fileSystemApplicationService.exists(fullPath);
+    }
+
     @Override
     public List<Report> findByCategory(Long categoryId) {
         return reportRepository.findByCategory(categoryId);
     }
 
     public Report addReportFile(MultipartFile file, Report report, boolean refresh) {
-        if(refresh)
+        if(refresh) {
             report = findById(report.getId());
+            report.getParameters().clear();
+        }
 
         var basePath = reportConfigApplicationService.findDefault().getBasePath();
         var fullPath = basePath + fileSystemApplicationService.separator() + report.getCategory().getPath();
+        report = report.withFileName(file.getOriginalFilename());
         try {
             fileSystemApplicationService.copy(fullPath, file);
 
-            var reportParameters = reportExtractorParameterApplicationService
-                    .extractParametersFromJrXml(fullPath + fileSystemApplicationService.separator() + report.getFileName());
+            if(!report.isSubReport()) {
 
-            return update(report.withFilePath(fullPath).withParameters(reportParameters));
+                var reportParameters = reportExtractorParameterApplicationService
+                        .extractParametersFromJrXml(fullPath + fileSystemApplicationService.separator() + report.getFileName());
+
+                report = report.withParameters(reportParameters);
+            }
+            report = report.withFilePath(fullPath);
+            return reportRepository.save(report);
         }catch (Exception ex){
             log.error("Error when trying upload file ", ex);
             throw new ReportDomainException("Error when trying upload file " + ex.getMessage(), ex);
@@ -130,6 +163,22 @@ public class ReportApplicationServiceImpl implements ReportApplicationService {
     }
 
     @Override
+    public UploadReportFileResponse storeFile(Long categoryId, MultipartFile file) {
+        var basePath = reportConfigApplicationService.findDefault().getBasePath();
+        var category = categoryApplicationService.findById(categoryId);
+        var fullPath = basePath + fileSystemApplicationService.separator() + category.getPath();
+
+        try{
+            fileSystemApplicationService.copy(fullPath, file);
+            return new UploadReportFileResponse(file.getOriginalFilename(), fullPath);
+        }catch (Exception ex){
+            log.error("Error when trying upload file ", ex);
+            throw new ReportDomainException("Error when trying upload file " + ex.getMessage(), ex);
+        }
+
+    }
+
+    @Override
     public Report createWithFile(CreateReportCommand createReportCommand, MultipartFile file) {
 
         var report = Report.builder()
@@ -138,9 +187,24 @@ public class ReportApplicationServiceImpl implements ReportApplicationService {
                 .connectionConfig(connectionConfigApplicationService.findById(createReportCommand.connectionId()))
                 .parameters(Set.of())
                 .subReports(Set.of())
+                .parent(createReportCommand.parentReportId() != null ? findById(createReportCommand.parentReportId()) : null)
                 .fileName(file.getOriginalFilename())
                 .build();
 
         return addReportFile(file, report, false);
+    }
+
+    public Report updateWithFile(UpdateReportCommand reportCommand, MultipartFile file){
+        var report = Report.builder()
+                .name(reportCommand.name() == null ? fileSystemApplicationService.getFileName(file.getOriginalFilename()) : reportCommand.name())
+                .category(categoryApplicationService.findById(reportCommand.categoryId()))
+                .connectionConfig(connectionConfigApplicationService.findById(reportCommand.connectionId()))
+                .parameters(Set.of())
+                .subReports(Set.of())
+                .fileName(file.getOriginalFilename())
+                .id(reportCommand.reportId())
+                .build();
+
+        return addReportFile(file, report, true);
     }
 }

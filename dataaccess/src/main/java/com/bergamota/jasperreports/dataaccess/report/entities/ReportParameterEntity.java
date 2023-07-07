@@ -37,10 +37,15 @@ public class ReportParameterEntity {
     @Column()
     private Boolean createdManually = true;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "report_id", referencedColumnName = "id")
     private ReportEntity report;
 
-    @OneToOne(mappedBy = "reportParameter")
+    @OneToOne(mappedBy = "reportParameter", cascade = CascadeType.ALL, orphanRemoval = true)
     private ReportParameterViewEntity reportParameterView;
+
+    public void fillParameterViewWithParameter() {
+        if(reportParameterView != null)
+            reportParameterView.setReportParameter(this);
+    }
 }

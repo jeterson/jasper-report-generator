@@ -13,10 +13,22 @@ import java.util.List;
 @Setter
 public class CategoryTree {
 
+    @JsonIgnore
     private Long id;
     private String label;
     @JsonIgnore
+    private boolean isReport;
+    @JsonIgnore
+    private List<Report> reports;
+    @JsonIgnore
     private CategoryTree parent;
+    public String getCode(){
+        return String.format("%s-%s", getHeader(), id);
+    }
+
+    public String getHeader() {
+        return isReport ? "report" : "category";
+    }
     @Builder.Default
     private List<CategoryTree> subItems = new ArrayList<>();
 
@@ -27,6 +39,7 @@ public class CategoryTree {
         var dto = CategoryTree.builder()
                 .id(category.getId())
                 .label(category.getDescription())
+                .reports(category.getReports())
                 .build();
 
         dto.setParent(of(category.getParent()));

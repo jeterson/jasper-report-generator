@@ -36,20 +36,18 @@ public class ReportRepositoryImpl implements ReportRepository {
     @Override
     public Report save(Report report) {
         var entityReport = reportDataAccessMapper.dataAccessEntity(report);
-        var savedReport = reportJpaRepository.save(entityReport);
 
-        for (ReportParameterEntity p : savedReport.getParameters()) {
-            p.setReport(savedReport);
-        }
-        reportParameterJpaRepository.saveAll(savedReport.getParameters());
-        for(ReportParameterEntity p: savedReport.getParameters()){
-            if(p.getReportParameterView() != null)
-                p.getReportParameterView().setReportParameter(p);
-        }
-       var parametersViews = savedReport.getParameters().stream().map(ReportParameterEntity::getReportParameterView).toList();
-        reportParameterViewJpaRepository.saveAll(parametersViews.stream().filter(Objects::nonNull).toList());
+        entityReport = reportJpaRepository.save(entityReport);
 
-        return reportDataAccessMapper.domainEntity(savedReport);
+        entityReport.fillParametersWithReport();
+
+        reportJpaRepository.save(entityReport);
+
+        entityReport.fillParametersWithReport();
+
+        reportJpaRepository.save(entityReport);
+
+        return reportDataAccessMapper.domainEntity(entityReport);
     }
 
     @Transactional

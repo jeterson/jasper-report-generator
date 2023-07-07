@@ -22,6 +22,7 @@ public class ReportDataAccessMapper {
     private final CategoryDataAccessMapper categoryDataAccessMapper;
     private final ConnectionConfigDataAccessMapper connectionConfigDataAccessMapper;
 
+
     public ReportEntity dataAccessEntity(Report report){
         return dataAccessEntity(report, true);
     }
@@ -89,6 +90,7 @@ public class ReportDataAccessMapper {
                 .defaultValue(reportParameterEntity.getDefaultValue())
                 .pattern(reportParameterEntity.getPattern())
                 .createdManually(reportParameterEntity.getCreatedManually())
+                .reportParameterView(dataAccessReportParameterViewEntity(reportParameterEntity.getReportParameterView()))
                 .report(report)
                 .build();
     }
@@ -100,7 +102,8 @@ public class ReportDataAccessMapper {
                 .type(reportParameter.getType())
                 .defaultValue(String.valueOf(reportParameter.getDefaultValue()))
                 .pattern(reportParameter.getPattern())
-                .report(dataAccessEntity(reportParameter.getReport()))
+                // to Avoid overflow exception
+                .report(reportParameter.getReport() == null ? null : ReportEntity.builder().id(reportParameter.getReport().getId()).build())
                 .createdManually(reportParameter.isCreatedManually())
                 .reportParameterView(dataAccessReportParameterViewEntity(reportParameter.getReportParameterView()))
                 .build();
@@ -113,6 +116,22 @@ public class ReportDataAccessMapper {
                 .required(reportParameterView.isRequired())
                 .sortOrder(reportParameterView.getSortOrder())
                 .id(reportParameterView.getId())
+                // to Avoid overflow exception
+                .reportParameter(reportParameterView.getReportParameter() == null ? null : ReportParameterEntity.builder().id(reportParameterView.getReportParameter().getId()).build())
+                .build();
+    }
+
+    private ReportParameterView dataAccessReportParameterViewEntity(ReportParameterViewEntity reportParameterView){
+        if(reportParameterView == null)
+            return null;
+        return ReportParameterView.builder()
+                .label(reportParameterView.getLabel())
+                .visible(reportParameterView.isVisible())
+                .required(reportParameterView.isRequired())
+                .sortOrder(reportParameterView.getSortOrder())
+                .id(reportParameterView.getId())
+                // to Avoid overflow exception
+                .reportParameter(reportParameterView.getReportParameter() == null ? null : ReportParameter.builder().id(reportParameterView.getReportParameter().getId()).build())
                 .build();
     }
 }

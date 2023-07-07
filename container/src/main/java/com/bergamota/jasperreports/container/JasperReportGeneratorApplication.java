@@ -62,7 +62,7 @@ public class JasperReportGeneratorApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-       var tree = categoryApplicationService.getCategoriesAsTree();
+       /*var tree = categoryApplicationService.getCategoriesAsTree();
        var connectionConfig = connectionConfigApplicationService.findById(1L);
        var connectionOk = connectionApplicationService.testConnection(connectionConfig);
 
@@ -89,6 +89,8 @@ public class JasperReportGeneratorApplication implements CommandLineRunner {
         //reportParameterRepository.create(parameter1);
 
         reportExtractorParameterApplicationService.extractParametersFromJrXml(report.getFullFilePath());
+
+        */
     }
 
     @Bean

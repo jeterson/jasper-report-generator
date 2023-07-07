@@ -2,6 +2,7 @@ package com.bergamota.jasperreports.dataaccess.report.entities;
 
 import com.bergamota.jasperreports.dataaccess.category.entities.CategoryEntity;
 import com.bergamota.jasperreports.dataaccess.connectionconfig.entities.ConnectionConfigEntity;
+import com.bergamota.jasperreports.domain.core.entities.ReportParameter;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -38,7 +39,7 @@ public class ReportEntity {
     @Column(unique = true)
     private String fileName;
 
-    @OneToMany(mappedBy = "report", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "report", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private Set<ReportParameterEntity> parameters = new HashSet<>();
 
@@ -46,7 +47,15 @@ public class ReportEntity {
     @Builder.Default
     private Set<ReportEntity> subReports = new HashSet<>();
 
-    @ManyToOne(cascade=CascadeType.MERGE)
+    @ManyToOne
     @JoinColumn(name="report_parent_id")
     private ReportEntity parent;
+
+    public void fillParametersWithReport(){
+        for(var p : parameters){
+            p.setReport(this);
+            p.fillParameterViewWithParameter();
+        }
+
+    }
 }

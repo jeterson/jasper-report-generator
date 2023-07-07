@@ -1,6 +1,7 @@
 package com.bergamota.jasperreports.dataaccess.category.repository;
 
 import com.bergamota.jasperreports.dataaccess.category.entities.CategoryEntity;
+import com.bergamota.jasperreports.dataaccess.report.entities.ReportEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,4 +20,5 @@ public interface CategoryJpaRepository extends JpaRepository<CategoryEntity, Lon
 
     @Query("SELECT CASE WHEN COUNT(c) > 0 THEN true ELSE false END FROM CategoryEntity c WHERE EXISTS(SELECT r FROM ReportEntity r WHERE r.category.id = c.id)")
     Boolean hasReportForCategory(Long categoryId);
+
 }

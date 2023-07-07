@@ -9,6 +9,7 @@ import com.bergamota.jasperreports.domain.core.exceptions.CategoryNotFoundExcept
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -58,10 +59,23 @@ public class CategoryApplicationServiceImpl implements CategoryApplicationServic
         tree = tree.stream().peek(parentNode -> {
             Predicate<CategoryTree> isChild = node -> node.getParent() != null && node.getParent().getId().equals(parentNode.getId());
 
-            var onlyChildren = categories.stream().filter(isChild).toList();
+            var onlyChildren = new ArrayList<>(categories.stream().filter(isChild).toList());
 
             List<CategoryTree> children = buildTree(categories, onlyChildren);
-            parentNode.setSubItems(children);
+            var mutableListChildren = new ArrayList<>(children);
+
+            if(parentNode.getReports() != null) {
+                parentNode.getReports().forEach(e -> {
+                    if(!e.isSubReport()) {
+                        mutableListChildren.add(CategoryTree.builder()
+                                .label(e.getName())
+                                .id(e.getId())
+                                .isReport(true)
+                                .build());
+                    }
+                });
+            }
+            parentNode.setSubItems(mutableListChildren);
         }).toList();
 
         return tree;

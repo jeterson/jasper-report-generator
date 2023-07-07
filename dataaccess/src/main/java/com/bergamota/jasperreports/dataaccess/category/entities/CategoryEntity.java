@@ -1,5 +1,6 @@
 package com.bergamota.jasperreports.dataaccess.category.entities;
 
+import com.bergamota.jasperreports.dataaccess.report.entities.ReportEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -7,6 +8,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 @Entity
 @Table(name = "category")
@@ -30,6 +33,9 @@ public class CategoryEntity {
 	@OneToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="parent_category_id", referencedColumnName="id")
 	private CategoryEntity parent;
+
+	@OneToMany(mappedBy = "category")
+	private List<ReportEntity> reports;
 	
 	
 }
