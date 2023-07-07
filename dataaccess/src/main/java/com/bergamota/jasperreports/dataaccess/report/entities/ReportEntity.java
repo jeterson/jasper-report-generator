@@ -39,7 +39,7 @@ public class ReportEntity {
     @Column(unique = true)
     private String fileName;
 
-    @OneToMany(mappedBy = "report", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "report", cascade = CascadeType.REMOVE, orphanRemoval = true)
     @Builder.Default
     private Set<ReportParameterEntity> parameters = new HashSet<>();
 

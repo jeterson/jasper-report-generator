@@ -25,14 +25,9 @@ public class ReportParameterRepositoryImpl implements ReportParameterRepository 
     @Override
     public ReportParameter save(ReportParameter obj) {
         var reportParameterEntity = reportParameterDataAccessMapper.dataAccessEntity(obj, false);
-        reportParameterEntity.setReportParameterView(null);
         var saved = reportParameterJpaRepository.save(reportParameterEntity);
-        var reportParameterView = reportParameterDataAccessMapper.dataAccessEntityView(obj.getReportParameterView());
-        saved.setReportParameterView(reportParameterView);
-        if(reportParameterView != null) {
-            reportParameterView.setReportParameter(saved);
-            reportParameterViewJpaRepository.save(reportParameterView);
-        }
+        saved.fillParameterViewWithParameter();
+        saved = reportParameterJpaRepository.save(saved);
         return reportParameterDataAccessMapper.domainEntity(saved);
     }
 
@@ -46,12 +41,14 @@ public class ReportParameterRepositoryImpl implements ReportParameterRepository 
     @Override
     public void remove(Long aLong) {
         var item = reportParameterJpaRepository.findById(aLong);
-        if(item.isPresent()){
+        /*if(item.isPresent()){
             if(item.get().getReportParameterView() != null)
                 reportParameterViewJpaRepository.delete(item.get().getReportParameterView());
 
             reportParameterJpaRepository.delete(item.get());
         }
+         */
+        item.ifPresent(reportParameterJpaRepository::delete);
     }
 
     @Override
