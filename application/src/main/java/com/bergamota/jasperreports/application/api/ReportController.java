@@ -78,5 +78,4 @@ public class ReportController {
     public ResponseEntity<Boolean> isFileAvailable(@PathVariable Long reportId){
         return ResponseEntity.ok(reportApplicationService.isReportFileAvailable(reportId));
     }
-
 }

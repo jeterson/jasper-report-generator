@@ -11,6 +11,7 @@ import com.bergamota.jasperreports.domain.core.entities.ReportParameterView;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -36,7 +37,7 @@ public class ReportDataAccessMapper {
                 .subReports(report.getSubReports() == null ? new HashSet<>() : report.getSubReports().stream().map(this::dataAccessEntity).collect(Collectors.toSet()))
                 .connection(connectionConfigDataAccessMapper.dataAccessEntity(report.getConnectionConfig()))
                 .parent(dataAccessEntity(report.getParent()))
-                .parameters(fillParameters ? report.getParameters().stream().map(this::reportParameterDataAccessEntity).collect(Collectors.toSet()) : new HashSet<>())
+                .parameters(fillParameters ? report.getParameters().stream().map(this::reportParameterDataAccessEntity).toList() : new ArrayList<>())
                 .fileName(report.getFileName())
                 .filePath(report.getFilePath())
                 .name(report.getName())
@@ -66,7 +67,7 @@ public class ReportDataAccessMapper {
                 .subReports(subReports)
                 .connectionConfig(connectionConfigDataAccessMapper.domainEntity(report.getConnection()))
                 .parent(parent)
-                .parameters(report.getParameters().stream().map(e -> reportParameterDomainEntity(e,false)).collect(Collectors.toSet()))
+                .parameters(report.getParameters().stream().map(e -> reportParameterDomainEntity(e,false)).toList())
                 .fileName(report.getFileName())
                 .filePath(report.getFilePath())
                 .id(report.getId())

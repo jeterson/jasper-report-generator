@@ -15,7 +15,9 @@ import org.w3c.dom.NodeList;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -32,10 +34,10 @@ public class ReportExtractorParameterApplicationServiceImpl implements ReportExt
         }
         return "";
     }
-    public Set<ReportParameter> extractParametersFromJrXml(String xmlPath)  {
+    public List<ReportParameter> extractParametersFromJrXml(String xmlPath)  {
 
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        Set<ReportParameter> reportParameters = new HashSet<>();
+        List<ReportParameter> reportParameters = new ArrayList<>();
         try {
             DocumentBuilder db = dbf.newDocumentBuilder();
             Document doc = db.parse(new File(xmlPath));

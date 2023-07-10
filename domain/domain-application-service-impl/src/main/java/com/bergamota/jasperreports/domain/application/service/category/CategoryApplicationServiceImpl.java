@@ -66,7 +66,7 @@ public class CategoryApplicationServiceImpl implements CategoryApplicationServic
 
             if(parentNode.getReports() != null) {
                 parentNode.getReports().forEach(e -> {
-                    if(!e.isSubReport()) {
+                    if(e.isNotSubReport()) {
                         mutableListChildren.add(CategoryTree.builder()
                                 .label(e.getName())
                                 .id(e.getId())

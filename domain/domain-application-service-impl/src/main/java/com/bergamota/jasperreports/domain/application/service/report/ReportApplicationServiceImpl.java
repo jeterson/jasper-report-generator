@@ -16,7 +16,6 @@ import com.bergamota.jasperreports.domain.core.entities.*;
 
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -42,7 +41,9 @@ public class ReportApplicationServiceImpl implements ReportApplicationService {
 
     @Override
     public List<Report> findAll(String reportName, Long categoryId, String categoryPath) {
-        return reportRepository.findAll(reportName, categoryId, categoryPath);
+        var reports = reportRepository.findAll(reportName, categoryId, categoryPath);
+        reports.forEach(e -> e.setReportAvailable(isReportFileAvailable(e.getId())));
+        return reports;
     }
 
     @Override
@@ -108,17 +109,17 @@ public class ReportApplicationServiceImpl implements ReportApplicationService {
 
     }
 
-    public Set<ReportParameter> findParametersFromJrxml(Long reportId){
+    public List<ReportParameter> findParametersFromJrxml(Long reportId){
         var report = findById(reportId);
         var parameters = reportExtractorParameterApplicationService.extractParametersFromJrXml(report.getFullFilePath());
-        parameters = parameters.stream().map(p -> p.withReport(report)).collect(Collectors.toSet());
+        parameters = parameters.stream().map(p -> p.withReport(report)).toList();
         return parameters;
     }
 
     @Override
     public boolean isReportFileAvailable(Long reportId) {
         var report = findById(reportId);
-        return fileSystemApplicationService.exists(report.getFullFilePath());
+        return isReportFileAvailable(report.getFullFilePath());
     }
 
     private boolean isReportFileAvailable(String fullPath){
@@ -142,7 +143,7 @@ public class ReportApplicationServiceImpl implements ReportApplicationService {
         try {
             fileSystemApplicationService.copy(fullPath, file);
 
-            if(!report.isSubReport()) {
+            if(report.isNotSubReport()) {
 
                 var reportParameters = reportExtractorParameterApplicationService
                         .extractParametersFromJrXml(fullPath + fileSystemApplicationService.separator() + report.getFileName());
@@ -185,7 +186,7 @@ public class ReportApplicationServiceImpl implements ReportApplicationService {
                 .name(createReportCommand.name() == null ? fileSystemApplicationService.getFileName(file.getOriginalFilename()) : createReportCommand.name())
                 .category(categoryApplicationService.findById(createReportCommand.categoryId()))
                 .connectionConfig(connectionConfigApplicationService.findById(createReportCommand.connectionId()))
-                .parameters(Set.of())
+                .parameters(List.of())
                 .subReports(Set.of())
                 .parent(createReportCommand.parentReportId() != null ? findById(createReportCommand.parentReportId()) : null)
                 .fileName(file.getOriginalFilename())
@@ -199,7 +200,7 @@ public class ReportApplicationServiceImpl implements ReportApplicationService {
                 .name(reportCommand.name() == null ? fileSystemApplicationService.getFileName(file.getOriginalFilename()) : reportCommand.name())
                 .category(categoryApplicationService.findById(reportCommand.categoryId()))
                 .connectionConfig(connectionConfigApplicationService.findById(reportCommand.connectionId()))
-                .parameters(Set.of())
+                .parameters(List.of())
                 .subReports(Set.of())
                 .fileName(file.getOriginalFilename())
                 .id(reportCommand.reportId())

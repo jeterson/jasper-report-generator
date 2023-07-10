@@ -6,7 +6,9 @@ import com.bergamota.jasperreports.domain.core.entities.ReportParameter;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -41,7 +43,7 @@ public class ReportEntity {
 
     @OneToMany(mappedBy = "report", cascade = CascadeType.REMOVE, orphanRemoval = true)
     @Builder.Default
-    private Set<ReportParameterEntity> parameters = new HashSet<>();
+    private List<ReportParameterEntity> parameters = new ArrayList<>();
 
     @OneToMany(mappedBy = "parent", fetch=FetchType.EAGER)
     @Builder.Default

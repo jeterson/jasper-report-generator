@@ -15,6 +15,7 @@ public interface ReportJpaRepository extends JpaRepository<ReportEntity, Long> {
 
     @Query("SELECT r FROM ReportEntity r WHERE UPPER(r.name) LIKE CONCAT('%',UPPER(:reportName),'%') " +
             " AND r.category.id = COALESCE(:categoryId, r.category.id) " +
-            " AND UPPER(r.category.path) LIKE CONCAT('%',UPPER(:categoryPath),'%')")
+            " AND UPPER(r.category.path) LIKE CONCAT('%',UPPER(:categoryPath),'%') " +
+            " AND r.parent IS NULL")
     List<ReportEntity> findByNameAndCategoryAndCategoryPath(String reportName, Long categoryId, String categoryPath);
 }

@@ -22,7 +22,7 @@ public interface ReportApplicationService {
     UploadReportFileResponse storeFile(Long categoryId, MultipartFile file);
     Report createWithFile(CreateReportCommand reportCommand, MultipartFile file);
     Report updateWithFile(UpdateReportCommand reportCommand, MultipartFile file);
-    Set<ReportParameter> findParametersFromJrxml(Long reportId);
+    List<ReportParameter> findParametersFromJrxml(Long reportId);
     boolean isReportFileAvailable(Long reportId);
 
 }
