@@ -36,6 +36,7 @@ public class JasperReportGeneratorApplicationServiceImpl implements JasperReport
     private final ExportPDFApplicationService exportPDFApplicationService;
     private final ConnectionApplicationService connectionApplicationService;
     private final DownloadApplicationService downloadApplicationService;
+    private final ConnectionConfigApplicationService connectionConfigApplicationService;
 
     private final Map<String, Object> params = new HashMap<>();
 
@@ -211,11 +212,11 @@ public class JasperReportGeneratorApplicationServiceImpl implements JasperReport
         if(connection.isEmpty())
             throw new ReportDomainException("Can't get connection of database");
 
-        properties.setReportConnection(connection.get());
+        properties.setReportConnectionId(report.getConnectionConfig().getId());
         properties.setDeleteAfterDownload(true);
         properties.setReportFileName(fileSystemService.getFileName(report.getFileName()));
         properties.setFolderReportsName(report.getFilePath().replace(config().getBasePath(), ""));
-        properties.setUseDatasourceAndConnection(true);
+        properties.setUseConnection(true);
         properties.setData(null);
         report.getSubReports().forEach(subRpt -> {
             properties.getSubReports().add(new ReportPropertiesSubReport(subRpt.getFilePath(), subRpt.getFileName()));
@@ -236,9 +237,20 @@ public class JasperReportGeneratorApplicationServiceImpl implements JasperReport
         return generateReport(properties);
     }
 
+    private Connection getReportConnection(ReportProperties reportProperties) {
+        if(!reportProperties.isUseConnection())
+            return null;
+        var connectionConfig = connectionConfigApplicationService.findById(reportProperties.getReportConnectionId());
+        var connection = connectionApplicationService.getConnection(connectionConfig);
+        if(connection.isEmpty())
+            throw new ReportDomainException("Can't get connection for report");
+
+        return connection.get();
+    }
+
     @SneakyThrows
     public String generateReport(ReportProperties reportProperties, HttpServletResponse response) {
-        Connection connection = reportProperties.getReportConnection();
+        Connection connection = getReportConnection(reportProperties);
         List<String> subReportCompiledFiles = null;
         String compiledFileName = "";
         var data = reportProperties.getData();
@@ -264,7 +276,7 @@ public class JasperReportGeneratorApplicationServiceImpl implements JasperReport
 
             JasperPrint jasperPrint;
 
-            if(data == null) {
+            if(reportProperties.isUseConnection()) {
                 log.info("No datasource is passed. Using external datasource");
                 jasperPrint = JasperFillManager.fillReport(jasperReport, params, connection);
             }else {

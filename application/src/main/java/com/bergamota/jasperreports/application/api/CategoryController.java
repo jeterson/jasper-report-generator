@@ -4,18 +4,21 @@ import com.bergamota.jasperreports.domain.application.service.dto.category.Categ
 import com.bergamota.jasperreports.domain.application.service.dto.category.CreateCategoryCommand;
 import com.bergamota.jasperreports.domain.application.service.input.services.CategoryApplicationService;
 import com.bergamota.jasperreports.domain.core.entities.CategoryTree;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import com.bergamota.jasperreports.domain.core.entities.Category;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/categories")
 @RequiredArgsConstructor
+@Hidden
 public class CategoryController {
 
     @Autowired

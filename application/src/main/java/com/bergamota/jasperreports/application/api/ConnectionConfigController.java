@@ -6,15 +6,18 @@ import com.bergamota.jasperreports.domain.application.service.dto.configconnecti
 import com.bergamota.jasperreports.domain.application.service.input.services.ConnectionApplicationService;
 import com.bergamota.jasperreports.domain.application.service.input.services.ConnectionConfigApplicationService;
 import com.bergamota.jasperreports.domain.core.entities.ConnectionConfig;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/connection-config")
 @RequiredArgsConstructor
+@Hidden
 public class ConnectionConfigController {
 
     private final ConnectionApplicationService connectionApplicationService;

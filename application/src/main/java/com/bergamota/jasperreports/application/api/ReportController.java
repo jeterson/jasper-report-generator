@@ -9,6 +9,7 @@ import com.bergamota.jasperreports.domain.application.service.input.services.Rep
 import com.bergamota.jasperreports.domain.core.entities.Report;
 import com.bergamota.jasperreports.domain.core.exceptions.ReportDomainException;
 import io.swagger.models.Response;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.ExtensionMethod;
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,7 @@ import java.util.List;
 @ExtensionMethod({
         JSONParseExtension.class
 })
+@Hidden
 public class ReportController {
 
     private final ReportApplicationService reportApplicationService;

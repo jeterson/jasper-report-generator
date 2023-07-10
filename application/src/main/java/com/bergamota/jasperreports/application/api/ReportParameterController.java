@@ -5,6 +5,7 @@ import com.bergamota.jasperreports.domain.application.service.dto.reportparamete
 import com.bergamota.jasperreports.domain.application.service.input.services.ReportParameterApplicationService;
 import com.bergamota.jasperreports.domain.core.entities.ReportParameter;
 import com.bergamota.jasperreports.domain.core.valueobjects.ReportParamType;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import java.util.List;
 @RequestMapping("/parameters")
 @RestController
 @RequiredArgsConstructor
+@Hidden
 public class ReportParameterController {
 
     private final ReportParameterApplicationService reportParameterApplicationService;
