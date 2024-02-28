@@ -50,36 +50,6 @@ public class CategoryApplicationServiceImpl implements CategoryApplicationServic
         return categoryRepository.findAll(description, parentId);
     }
 
-    private List<CategoryTree> buildTree(List<CategoryTree> categories, List<CategoryTree> tree) {
-
-        if(tree == null) {
-            tree = categories.stream().filter(c -> c.getParent() == null).toList();
-        }
-
-        tree = tree.stream().peek(parentNode -> {
-            Predicate<CategoryTree> isChild = node -> node.getParent() != null && node.getParent().getId().equals(parentNode.getId());
-
-            var onlyChildren = new ArrayList<>(categories.stream().filter(isChild).toList());
-
-            List<CategoryTree> children = buildTree(categories, onlyChildren);
-            var mutableListChildren = new ArrayList<>(children);
-
-            if(parentNode.getReports() != null) {
-                parentNode.getReports().forEach(e -> {
-                    if(e.isNotSubReport()) {
-                        mutableListChildren.add(CategoryTree.builder()
-                                .label(e.getName())
-                                .id(e.getId())
-                                .isReport(true)
-                                .build());
-                    }
-                });
-            }
-            parentNode.setSubItems(mutableListChildren);
-        }).toList();
-
-        return tree;
-    }
 
     @Override
     public List<CategoryTree> getCategoriesAsTree() {
@@ -87,7 +57,7 @@ public class CategoryApplicationServiceImpl implements CategoryApplicationServic
 
         List<CategoryTree> categoriesDTO = categories.stream().map(CategoryTree::of).toList();
 
-        return buildTree(categoriesDTO, null);
+        return categoriesDTO;
 
     }
     @Override

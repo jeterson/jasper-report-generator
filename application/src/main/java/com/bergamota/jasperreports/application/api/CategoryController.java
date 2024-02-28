@@ -35,13 +35,6 @@ public class CategoryController {
         var categories = categoryApplicationService.findAll(categoryRequestFilter.description(), categoryRequestFilter.parentId());
         return ResponseEntity.ok(categories);
     }
-
-    @GetMapping("/tree")
-    public ResponseEntity<List<CategoryTree>> findCategoriesAsTree(){
-        var categoriesTree = categoryApplicationService.getCategoriesAsTree();
-        return ResponseEntity.ok(categoriesTree);
-    }
-
     @PostMapping
     public ResponseEntity<Category> create(@RequestBody CreateCategoryCommand categoryCommand){
         var categoryParent = categoryCommand.parentId() == null ? null : Category.builder().id(categoryCommand.parentId()).build();

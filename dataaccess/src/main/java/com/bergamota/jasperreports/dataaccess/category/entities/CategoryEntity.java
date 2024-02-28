@@ -34,7 +34,7 @@ public class CategoryEntity {
 	@JoinColumn(name="parent_category_id", referencedColumnName="id")
 	private CategoryEntity parent;
 
-	@OneToMany(mappedBy = "category")
+	@OneToMany(mappedBy = "category", fetch = FetchType.EAGER)
 	private List<ReportEntity> reports;
 	
 	

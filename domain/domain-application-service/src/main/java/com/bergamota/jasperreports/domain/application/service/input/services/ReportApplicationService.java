@@ -3,6 +3,7 @@ package com.bergamota.jasperreports.domain.application.service.input.services;
 import com.bergamota.jasperreports.domain.application.service.dto.report.CreateReportCommand;
 import com.bergamota.jasperreports.domain.application.service.dto.report.UpdateReportCommand;
 import com.bergamota.jasperreports.domain.application.service.dto.report.UploadReportFileResponse;
+import com.bergamota.jasperreports.domain.core.entities.CategoryTree;
 import com.bergamota.jasperreports.domain.core.entities.Report;
 import com.bergamota.jasperreports.domain.core.entities.ReportParameter;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,5 +25,6 @@ public interface ReportApplicationService {
     Report updateWithFile(UpdateReportCommand reportCommand, MultipartFile file);
     List<ReportParameter> findParametersFromJrxml(Long reportId);
     boolean isReportFileAvailable(Long reportId);
+    List<CategoryTree> getReportsAndCategoriesTree();
 
 }

@@ -30,7 +30,7 @@ public class ReportEntity {
     private String filePath;
     private String name;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id", referencedColumnName = "id")
     private CategoryEntity category;
 
@@ -49,7 +49,7 @@ public class ReportEntity {
     @Builder.Default
     private Set<ReportEntity> subReports = new HashSet<>();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="report_parent_id")
     private ReportEntity parent;
 

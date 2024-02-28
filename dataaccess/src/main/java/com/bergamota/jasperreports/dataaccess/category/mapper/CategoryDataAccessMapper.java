@@ -14,17 +14,18 @@ public class CategoryDataAccessMapper {
         if(categoryEntity == null)
             return null;
 
-        return Category.builder()
+        var category = Category.builder()
                 .description(categoryEntity.getDescription())
                 .id(categoryEntity.getId())
                 .parent(domainEntity(categoryEntity.getParent()))
                 .path(categoryEntity.getPath())
                 .reports(categoryEntity.getReports() == null ? new ArrayList<>() : categoryEntity.getReports().stream().map(r -> Report.builder()
                         .id(r.getId())
-                        .parent(r.getParent() != null ? Report.builder().build() : null)
+                        .parent(r.getParent() != null ? Report.builder().id(r.getParent().getId()).build() : null)
                         .name(r.getName())
                         .build()).toList())
                 .build();
+        return category;
     }
     public CategoryEntity dataAccessEntity(Category category){
         if(category == null)

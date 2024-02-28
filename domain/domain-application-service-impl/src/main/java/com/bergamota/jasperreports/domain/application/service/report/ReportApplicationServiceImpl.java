@@ -14,8 +14,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import com.bergamota.jasperreports.domain.core.entities.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 
 @Service
 @Slf4j
@@ -208,4 +210,41 @@ public class ReportApplicationServiceImpl implements ReportApplicationService {
 
         return addReportFile(file, report, true);
     }
+
+    public List<CategoryTree> getReportsAndCategoriesTree() {
+        var categoriesTree = categoryApplicationService.getCategoriesAsTree();
+        return buildTree(categoriesTree, null);
+    }
+    private List<CategoryTree> buildTree(List<CategoryTree> categories, List<CategoryTree> tree) {
+
+        if(tree == null) {
+            tree = categories.stream().filter(c -> c.getParent() == null).toList();
+        }
+
+        tree = tree.stream().peek(parentNode -> {
+            Predicate<CategoryTree> isChild = node -> node.getParent() != null && node.getParent().getId().equals(parentNode.getId());
+
+            var onlyChildren = new ArrayList<>(categories.stream().filter(isChild).toList());
+
+            List<CategoryTree> children = buildTree(categories, onlyChildren);
+            var mutableListChildren = new ArrayList<>(children);
+
+            if(parentNode.getReports() != null) {
+                parentNode.getReports().forEach(e -> {
+                    var report = reportRepository.findById(e.getId());
+                    if(report.isPresent() && report.get().isNotSubReport()) {
+                        mutableListChildren.add(CategoryTree.builder()
+                                .label(report.get().getName())
+                                .id(report.get().getId())
+                                .isReport(true)
+                                .build());
+                    }
+                });
+            }
+            parentNode.setSubItems(mutableListChildren);
+        }).toList();
+
+        return tree;
+    }
+
 }
